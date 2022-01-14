@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="240" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="18">
+ <tileset firstgid="1" source="tileset.tsx"/>
+ <layer id="1" name="Background" width="240" height="50">
+  <data encoding="base64" compression="zlib">
+   eJztw0ENAAAMA6Hzb6YW95kMSFg1VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf0H3O0NAQ==
+  </data>
+ </layer>
+ <layer id="2" name="Graphics" width="240" height="50">
+  <data encoding="base64" compression="zlib">
+   eJzt2rENwCAMBEAzBjBX9srItChKkSIWAt1J33/3LhwBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMCprtUFgM9qiWiP9LK6FQCc454C7KW6jwEgnb0FgHz2FgD+8/Zj4d8CAHIM6rsEjg==
+  </data>
+ </layer>
+ <objectgroup id="3" name="Ground">
+  <object id="2" x="32" y="768" width="144" height="16"/>
+  <object id="3" x="192" y="736" width="48" height="16"/>
+  <object id="4" x="256" y="704" width="48" height="16"/>
+  <object id="5" x="320" y="672" width="48" height="16"/>
+  <object id="6" x="400" y="624" width="96" height="16"/>
+ </objectgroup>
+ <objectgroup id="5" name="Chests">
+  <object id="16" x="464" y="608" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="4" name="Spikes">
+  <object id="8" x="320" y="660.818" width="47.9091" height="11.0909"/>
+ </objectgroup>
+</map>
