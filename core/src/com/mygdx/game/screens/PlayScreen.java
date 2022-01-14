@@ -45,13 +45,13 @@ public class PlayScreen implements Screen{
 
 		gameCam = new OrthographicCamera();
 		gameCam.zoom = 0.4f;
-		gamePort = new FitViewport(LostLegacy.V_WIDTH , LostLegacy.V_HEIGHT, gameCam);
+		gamePort = new FitViewport(LostLegacy.V_WIDTH / LostLegacy.PPM , LostLegacy.V_HEIGHT / LostLegacy.PPM, gameCam);
 
 		hud = new Hud(game.batch);
 
 		mapLoader = new TmxMapLoader();
 		map = mapLoader.load("map.tmx");
-		renderer = new OrthogonalTiledMapRenderer(map);
+		renderer = new OrthogonalTiledMapRenderer(map, 1 / LostLegacy.PPM);
 
 		gameCam.position.set(gamePort.getWorldWidth()/2 * gameCam.zoom, gamePort.getWorldHeight()/2 * gameCam.zoom, 0);
 
@@ -68,11 +68,11 @@ public class PlayScreen implements Screen{
 			Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
 			bdef.type = BodyDef.BodyType.StaticBody;
-			bdef.position.set(rect.getX() + rect.getWidth()/2, rect.getY() + rect.getHeight()/2);
+			bdef.position.set((rect.getX() + rect.getWidth()/2) / LostLegacy.PPM, (rect.getY() + rect.getHeight()/2) / LostLegacy.PPM);
 
 			body  = world.createBody(bdef);
 
-			shape.setAsBox(rect.getWidth()/2 , rect.getHeight()/2 );
+			shape.setAsBox(rect.getWidth()/2 / LostLegacy.PPM , rect.getHeight()/2 / LostLegacy.PPM );
 			fdef.shape = shape;
 			body.createFixture(fdef);
 		}
@@ -81,11 +81,11 @@ public class PlayScreen implements Screen{
 			Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
 			bdef.type = BodyDef.BodyType.StaticBody;
-			bdef.position.set(rect.getX() + rect.getWidth()/2 , rect.getY() + rect.getHeight()/2 );
+			bdef.position.set((rect.getX() + rect.getWidth()/2) / LostLegacy.PPM, (rect.getY() + rect.getHeight()/2) / LostLegacy.PPM);
 
 			body  = world.createBody(bdef);
 
-			shape.setAsBox(rect.getWidth()/2 , rect.getHeight()/2 );
+			shape.setAsBox(rect.getWidth()/2 / LostLegacy.PPM , rect.getHeight()/2 / LostLegacy.PPM );
 			fdef.shape = shape;
 			body.createFixture(fdef);
 		}
@@ -94,11 +94,11 @@ public class PlayScreen implements Screen{
 			Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
 			bdef.type = BodyDef.BodyType.StaticBody;
-			bdef.position.set(rect.getX() + rect.getWidth()/2, rect.getY() + rect.getHeight()/2);
+			bdef.position.set((rect.getX() + rect.getWidth()/2) / LostLegacy.PPM, (rect.getY() + rect.getHeight()/2) / LostLegacy.PPM);
 
 			body  = world.createBody(bdef);
 
-			shape.setAsBox(rect.getWidth()/2 , rect.getHeight()/2 );
+			shape.setAsBox(rect.getWidth()/2 / LostLegacy.PPM , rect.getHeight()/2 / LostLegacy.PPM );
 			fdef.shape = shape;
 			body.createFixture(fdef);
 		}
@@ -113,6 +113,12 @@ public class PlayScreen implements Screen{
 	}
 
 	public void handleInput(float deltaTime) {
+		if (Gdx.input.isKeyJustPressed(Input.Keys.UP))
+			player.b2body.applyLinearImpulse(new Vector2(0, 4), player.b2body.getWorldCenter(), true);
+		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 2)
+			player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
+		if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -2)
+			player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
 
 	}
 
@@ -120,6 +126,18 @@ public class PlayScreen implements Screen{
 		handleInput(deltaTime);
 
 		world.step(1/60f, 6, 2);
+
+
+		gameCam.position.x = player.b2body.getPosition().x;
+		gameCam.position.y = player.b2body.getPosition().y;
+		if (gameCam.position.y - gamePort.getWorldHeight() / 2 * gameCam.zoom <= 0 )
+			gameCam.position.y = 0 + gamePort.getWorldHeight() / 2 * gameCam.zoom;
+		if (gameCam.position.x - gamePort.getWorldWidth() / 2 * gameCam.zoom <= 0 )
+			gameCam.position.x = 0 + gamePort.getWorldWidth() / 2 * gameCam.zoom;
+		if (gameCam.position.y + gamePort.getWorldHeight() / 2 * gameCam.zoom >= gamePort.getWorldHeight() )
+			gameCam.position.y = gamePort.getWorldHeight() - gamePort.getWorldHeight() / 2 * gameCam.zoom;
+		if (gameCam.position.x + gamePort.getWorldWidth() / 2 * gameCam.zoom >= gamePort.getWorldWidth() )
+			gameCam.position.x = gamePort.getWorldWidth() - gamePort.getWorldWidth() / 2 * gameCam.zoom;
 
 		gameCam.update();
 		renderer.setView(gameCam);

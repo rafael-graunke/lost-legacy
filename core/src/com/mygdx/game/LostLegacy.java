@@ -17,7 +17,7 @@ public class LostLegacy extends Game {
 	public SpriteBatch batch;
 	public static final int V_WIDTH = 1280;
 	public static final int V_HEIGHT = 720;
-//	public static final float PPM = 100;
+	public static final float PPM = 100;
 
 	@Override
 	public void create () {

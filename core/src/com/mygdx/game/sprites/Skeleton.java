@@ -16,14 +16,14 @@ public class Skeleton extends Sprite {
 
     public void defineSkeleton() {
         BodyDef bdef = new BodyDef();
-        bdef.position.set(32 , 128);
+        bdef.position.set(32 / LostLegacy.PPM , 128 / LostLegacy.PPM);
         bdef.type = BodyDef.BodyType.DynamicBody;
 
         b2body = world.createBody(bdef);
 
         FixtureDef fdef = new FixtureDef();
         CircleShape shape = new CircleShape();
-        shape.setRadius(5);
+        shape.setRadius(5 / LostLegacy.PPM);
 
         fdef.shape = shape;
 
