@@ -5,27 +5,24 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.LostLegacy;
 import com.mygdx.game.scenes.Hud;
 import com.mygdx.game.sprites.Skeleton;
-import com.sun.prism.image.ViewPort;
+import com.mygdx.game.tools.B2WorldCreator;
 
 public class PlayScreen implements Screen{
 
 	private LostLegacy game;
+	private TextureAtlas atlas;
+
 	private OrthographicCamera gameCam;
 	private Viewport gamePort;
 	private Hud hud;
@@ -43,8 +40,10 @@ public class PlayScreen implements Screen{
 	public PlayScreen(LostLegacy game) {
 		this.game = game;
 
+		atlas = new TextureAtlas("spriteSheets/player.atlas");
+
 		gameCam = new OrthographicCamera();
-		gameCam.zoom = 0.4f;
+		gameCam.zoom = 0.3f;
 		gamePort = new FitViewport(LostLegacy.V_WIDTH / LostLegacy.PPM , LostLegacy.V_HEIGHT / LostLegacy.PPM, gameCam);
 
 		hud = new Hud(game.batch);
@@ -58,51 +57,9 @@ public class PlayScreen implements Screen{
 		world = new World(new Vector2(0, -10), true);
 		b2dr = new Box2DDebugRenderer();
 
-		//Temporario
-		BodyDef bdef = new BodyDef();
-		PolygonShape shape = new PolygonShape();
-		FixtureDef fdef = new FixtureDef();
-		Body body;
-		//Chao
-		for (MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
-			Rectangle rect = ((RectangleMapObject) object).getRectangle();
+		new B2WorldCreator(world, map);
 
-			bdef.type = BodyDef.BodyType.StaticBody;
-			bdef.position.set((rect.getX() + rect.getWidth()/2) / LostLegacy.PPM, (rect.getY() + rect.getHeight()/2) / LostLegacy.PPM);
-
-			body  = world.createBody(bdef);
-
-			shape.setAsBox(rect.getWidth()/2 / LostLegacy.PPM , rect.getHeight()/2 / LostLegacy.PPM );
-			fdef.shape = shape;
-			body.createFixture(fdef);
-		}
-		//baus
-		for (MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
-			Rectangle rect = ((RectangleMapObject) object).getRectangle();
-
-			bdef.type = BodyDef.BodyType.StaticBody;
-			bdef.position.set((rect.getX() + rect.getWidth()/2) / LostLegacy.PPM, (rect.getY() + rect.getHeight()/2) / LostLegacy.PPM);
-
-			body  = world.createBody(bdef);
-
-			shape.setAsBox(rect.getWidth()/2 / LostLegacy.PPM , rect.getHeight()/2 / LostLegacy.PPM );
-			fdef.shape = shape;
-			body.createFixture(fdef);
-		}
-		//espinhos
-		for (MapObject object : map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
-			Rectangle rect = ((RectangleMapObject) object).getRectangle();
-
-			bdef.type = BodyDef.BodyType.StaticBody;
-			bdef.position.set((rect.getX() + rect.getWidth()/2) / LostLegacy.PPM, (rect.getY() + rect.getHeight()/2) / LostLegacy.PPM);
-
-			body  = world.createBody(bdef);
-
-			shape.setAsBox(rect.getWidth()/2 / LostLegacy.PPM , rect.getHeight()/2 / LostLegacy.PPM );
-			fdef.shape = shape;
-			body.createFixture(fdef);
-		}
-		player = new Skeleton(world);
+		player = new Skeleton(world, this);
 
 	}
 
@@ -112,6 +69,10 @@ public class PlayScreen implements Screen{
 		
 	}
 
+	public TextureAtlas getAtlas() {
+		return atlas;
+	}
+
 	public void handleInput(float deltaTime) {
 		if (Gdx.input.isKeyJustPressed(Input.Keys.UP))
 			player.b2body.applyLinearImpulse(new Vector2(0, 4), player.b2body.getWorldCenter(), true);
@@ -119,6 +80,8 @@ public class PlayScreen implements Screen{
 			player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -2)
 			player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
+		if (Gdx.input.isKeyPressed(Input.Keys.Z) && player.getState() == Skeleton.State.JUMPING)
+			player.attack();
 
 	}
 
@@ -127,6 +90,7 @@ public class PlayScreen implements Screen{
 
 		world.step(1/60f, 6, 2);
 
+		player.update(deltaTime);
 
 		gameCam.position.x = player.b2body.getPosition().x;
 		gameCam.position.y = player.b2body.getPosition().y;
@@ -152,6 +116,11 @@ public class PlayScreen implements Screen{
 		renderer.render();
 
 		b2dr.render(world, gameCam.combined);
+
+		game.batch.setProjectionMatrix(gameCam.combined);
+		game.batch.begin();
+		player.draw(game.batch);
+		game.batch.end();
 
 		game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
 		hud.stage.draw();
@@ -183,8 +152,11 @@ public class PlayScreen implements Screen{
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-		
+		map.dispose();
+		renderer.dispose();
+		world.dispose();
+		b2dr.dispose();
+		hud.dispose();
 	}
 
 }
