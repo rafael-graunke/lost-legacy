@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="240" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="18">
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="240" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="32">
  <tileset firstgid="1" source="tileset.tsx"/>
  <layer id="1" name="Background" width="240" height="50">
   <data encoding="base64" compression="zlib">
@@ -8,20 +8,26 @@
  </layer>
  <layer id="2" name="Graphics" width="240" height="50">
   <data encoding="base64" compression="zlib">
-   eJzt2rENwCAMBEAzBjBX9srItChKkSIWAt1J33/3LhwBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMCprtUFgM9qiWiP9LK6FQCc454C7KW6jwEgnb0FgHz2FgD+8/Zj4d8CAHIM6rsEjg==
+   eJzt201OwlAYhtFL1EX4F7fAgKlzg2PnrIi4CfbhLtyODGi8KTS0TYu+4ZzkC9wCpZMnbRPYllK2xpjYWe9nY4yJmbfy2++qAEmWRb+QSr+QS7+QS7+QS7+QS7+QS7+QS7+Qq+l3V/QLafQLufQLufQLufQLufQLufQLufQLufQLufQLufQLufQLufQLufQLufQLufQLufQLufQLufQLufQLufQLufQLufQLufQLuep+n/Zze2ae/+YwgRPqfrc9xjka/o+63/V+Nod5qZ7X6/dLHyDQqev+96v1vvZ6Ch8z7BOuySX7vSnH99N3E+wXrtUl+12W4/ts99MwXle/34fH19a6r89q6u/SL0ynq9/7RSkP1Twuhu23uVaur4/1C9Oa6/cbTaurE9v0C9OYqt/2+Va/ML+p+m33ql+Y39h+z51v9QvzG9vvuV71C/Mb+v+FZh6qz5Qe63pb3W/9OjDM0P8v7E5M6bGut7X3CYzT9PsD9odvhg==
   </data>
  </layer>
  <objectgroup id="3" name="Ground">
-  <object id="2" x="32" y="768" width="144" height="16"/>
-  <object id="3" x="192" y="736" width="48" height="16"/>
-  <object id="4" x="256" y="704" width="48" height="16"/>
-  <object id="5" x="320" y="672" width="48" height="16"/>
-  <object id="6" x="400" y="624" width="96" height="16"/>
+  <object id="20" x="0" y="768" width="240" height="32"/>
+  <object id="21" x="192" y="736" width="48" height="32"/>
+  <object id="22" x="256" y="704" width="48" height="95.6667"/>
+  <object id="23" x="320" y="672" width="48" height="128"/>
+  <object id="24" x="400" y="624" width="96" height="176.333"/>
+  <object id="25" x="32" y="560" width="144" height="48"/>
+  <object id="26" x="0" y="0" width="32" height="768"/>
+  <object id="27" x="64" y="672" width="80" height="16"/>
  </objectgroup>
  <objectgroup id="5" name="Chests">
   <object id="16" x="464" y="608" width="16" height="16"/>
  </objectgroup>
  <objectgroup id="4" name="Spikes">
   <object id="8" x="320" y="660.818" width="47.9091" height="11.0909"/>
+ </objectgroup>
+ <objectgroup id="6" name="Keys">
+  <object id="29" x="98.3333" y="660.333" width="11" height="11"/>
  </objectgroup>
 </map>

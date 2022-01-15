@@ -16,10 +16,12 @@ public class Skeleton extends Sprite {
     public World world;
     public Body b2body;
     private TextureRegion playerIdle;
-    private Animation skeletonWalk;
-    private Animation skeletonJump;
+    private Animation<TextureRegion> skeletonWalk;
+    private Animation<TextureRegion> skeletonJump;
+    private Animation<TextureRegion> skeletonAttack;
     public float stateTimer;
     private boolean walkingRigth;
+    public boolean attacking;
 
     public Skeleton(World world, PlayScreen screen) {
         super(screen.getAtlas().findRegion("idle"));
@@ -29,17 +31,21 @@ public class Skeleton extends Sprite {
         previousState = State.STANDING;
         stateTimer = 0;
         walkingRigth = true;
+        attacking = false;
 
         Array<TextureRegion> frames = new Array<>();
         for (int i = 0; i < 4; i++) {
             frames.add(screen.getAtlas().findRegions("walk").get(i));
         }
-        skeletonWalk = new Animation(0.25f, frames);
+        skeletonWalk = new Animation<TextureRegion>(0.25f, frames);
+        frames.clear();
+
+        frames.add(screen.getAtlas().findRegions("attack").get(0));
+        skeletonAttack = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         frames.add(screen.getAtlas().findRegions("jump").get(0));
-
-        skeletonJump = new Animation(0.1f, frames);
+        skeletonJump = new Animation<TextureRegion>(0.1f, frames);
 
 
         defineSkeleton();
@@ -50,16 +56,17 @@ public class Skeleton extends Sprite {
 
     public void defineSkeleton() {
         BodyDef bdef = new BodyDef();
-        bdef.position.set(32 / LostLegacy.PPM , 128 / LostLegacy.PPM);
+        bdef.position.set(64 / LostLegacy.PPM , 64 / LostLegacy.PPM);
         bdef.type = BodyDef.BodyType.DynamicBody;
 
         b2body = world.createBody(bdef);
 
         FixtureDef fdef = new FixtureDef();
         CircleShape shape = new CircleShape();
-        shape.setRadius(5 / LostLegacy.PPM);
+        shape.setRadius(7 / LostLegacy.PPM);
 
         fdef.shape = shape;
+        fdef.friction = 0.5f; //TODO: alterar
 
         b2body.createFixture(fdef);
     }
@@ -75,15 +82,18 @@ public class Skeleton extends Sprite {
         TextureRegion region;
         switch (currentState) {
             case JUMPING:
-                region = (TextureRegion) skeletonJump.getKeyFrame(stateTimer);
+                region = skeletonJump.getKeyFrame(stateTimer);
                 break;
             case WALKING:
-                region = (TextureRegion) skeletonWalk.getKeyFrame(stateTimer, true);
+                region = skeletonWalk.getKeyFrame(stateTimer, true);
+                break;
+            case ATTACKING:
+                region = skeletonAttack.getKeyFrame(stateTimer);
                 break;
             case FALLING:
             case STANDING:
             default:
-                region = (TextureRegion) playerIdle;
+                region = playerIdle;
                 break;
         }
 
@@ -102,7 +112,9 @@ public class Skeleton extends Sprite {
 
     public State getState() {
 
-        if (b2body.getLinearVelocity().y > 0 || b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)
+        if (attacking)
+            return State.ATTACKING;
+        else if (b2body.getLinearVelocity().y > 0 || b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)
             return State.JUMPING;
         else if (b2body.getLinearVelocity().y < 0)
             return State.FALLING;
@@ -111,11 +123,6 @@ public class Skeleton extends Sprite {
         else
             return State.STANDING;
 
-    }
-
-    public void attack() {
-        previousState = currentState;
-        currentState = State.ATTACKING;
     }
 
 }
