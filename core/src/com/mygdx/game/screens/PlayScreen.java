@@ -17,6 +17,7 @@ import com.mygdx.game.LostLegacy;
 import com.mygdx.game.scenes.Hud;
 import com.mygdx.game.sprites.Skeleton;
 import com.mygdx.game.tools.B2WorldCreator;
+import com.mygdx.game.tools.WorldContactListener;
 
 public class PlayScreen implements Screen{
 
@@ -57,10 +58,11 @@ public class PlayScreen implements Screen{
 		world = new World(new Vector2(0, -10), true);
 		b2dr = new Box2DDebugRenderer();
 
-		new B2WorldCreator(world, map);
+		new B2WorldCreator(world, map, this);
 
 		player = new Skeleton(world, this);
 
+		world.setContactListener(new WorldContactListener());
 	}
 
 	@Override
@@ -77,7 +79,7 @@ public class PlayScreen implements Screen{
 
 		player.attacking = Gdx.input.isKeyPressed(Input.Keys.Z) && (player.b2body.getLinearVelocity().y != 0);
 		if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && (player.getState() == Skeleton.State.STANDING || player.getState() == Skeleton.State.WALKING))
-			player.b2body.applyLinearImpulse(new Vector2(0, 3.5f - player.b2body.getLinearVelocity().y), player.b2body.getWorldCenter(), true);
+			player.jump();
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 2)
 			player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -2)
@@ -159,4 +161,7 @@ public class PlayScreen implements Screen{
 		hud.dispose();
 	}
 
+	public Skeleton getPlayer() {
+		return player;
+	}
 }

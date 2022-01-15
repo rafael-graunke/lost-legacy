@@ -12,6 +12,7 @@ public abstract class InteractiveTileObject {
     protected TiledMapTile tile;
     protected Rectangle bounds;
     protected Body body;
+    protected Fixture fixture;
 
     public InteractiveTileObject (World world, TiledMap map, Rectangle bounds) {
         this.world = world;
@@ -29,6 +30,9 @@ public abstract class InteractiveTileObject {
 
         shape.setAsBox(bounds.getWidth()/2 / LostLegacy.PPM , bounds.getHeight()/2 / LostLegacy.PPM );
         fdef.shape = shape;
-        body.createFixture(fdef);
+        fdef.isSensor = true;
+        fixture = body.createFixture(fdef);
     }
+
+    public abstract void onSwordHit();
 }

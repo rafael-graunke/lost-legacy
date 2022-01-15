@@ -3,6 +3,7 @@ package com.mygdx.game.sprites;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.LostLegacy;
@@ -62,17 +63,23 @@ public class Skeleton extends Sprite {
         b2body = world.createBody(bdef);
 
         FixtureDef fdef = new FixtureDef();
-        CircleShape shape = new CircleShape();
-        shape.setRadius(7 / LostLegacy.PPM);
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(7 / LostLegacy.PPM, 7 / LostLegacy.PPM);
 
         fdef.shape = shape;
-        fdef.friction = 0.5f; //TODO: alterar
+        fdef.friction = 0.5f;
 
         b2body.createFixture(fdef);
+
+        EdgeShape sword = new EdgeShape();
+        sword.set(new Vector2(-5 / LostLegacy.PPM, -8 / LostLegacy.PPM), new Vector2(5 / LostLegacy.PPM, -8 / LostLegacy.PPM));
+        fdef.shape = sword;
+        fdef.isSensor = true;
+        b2body.createFixture(fdef).setUserData("sword");
     }
 
     public void update(float deltaTime) {
-        setPosition(b2body.getPosition().x - getWidth()/2, b2body.getPosition().y - getHeight()/2);
+        setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight()/2);
         setRegion(getFrame(deltaTime));
     }
 
@@ -123,6 +130,11 @@ public class Skeleton extends Sprite {
         else
             return State.STANDING;
 
+    }
+
+    //Movimento
+    public void jump() {
+        b2body.applyLinearImpulse(new Vector2(0, 3.5f - b2body.getLinearVelocity().y), b2body.getWorldCenter(), true);
     }
 
 }
