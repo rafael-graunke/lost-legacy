@@ -20,11 +20,15 @@ public class Spike extends InteractiveTileObject {
 
     @Override
     public void onSwordHit() {
-        Gdx.app.log("Spike", "Collision");
         Skeleton player = screen.getPlayer();
         if (player.currentState == Skeleton.State.ATTACKING)
             player.jump();
+    }
 
+    @Override
+    public void onBodyHit() {
+        Skeleton player = screen.getPlayer();
+        player.die();
     }
 
 }

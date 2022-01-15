@@ -17,5 +17,8 @@ public class Chest extends InteractiveTileObject{
         Gdx.app.log("Chest", "Collision");
     }
 
+    @Override
+    public void onBodyHit() {
 
+    }
 }

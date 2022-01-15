@@ -17,8 +17,18 @@ public class WorldContactListener implements ContactListener {
             if (object.getUserData() != null && InteractiveTileObject.class.isAssignableFrom(object.getUserData().getClass())) {
                 ((InteractiveTileObject) object.getUserData()).onSwordHit();
             }
+        }
+
+        if (fixA.getUserData() == "body" || fixB.getUserData() == "body") {
+            Fixture sword = fixA.getUserData() == "body" ? fixA : fixB;
+            Fixture object = sword == fixA ? fixB : fixA;
+
+            if (object.getUserData() != null && InteractiveTileObject.class.isAssignableFrom(object.getUserData().getClass())) {
+                ((InteractiveTileObject) object.getUserData()).onBodyHit();
+            }
 
         }
+
     }
 
     @Override

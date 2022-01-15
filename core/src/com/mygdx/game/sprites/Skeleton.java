@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.LostLegacy;
 import com.mygdx.game.screens.PlayScreen;
 
@@ -69,16 +70,26 @@ public class Skeleton extends Sprite {
         fdef.shape = shape;
         fdef.friction = 0.5f;
 
-        b2body.createFixture(fdef);
+        b2body.createFixture(fdef).setUserData("body");
 
-        EdgeShape sword = new EdgeShape();
-        sword.set(new Vector2(-5 / LostLegacy.PPM, -8 / LostLegacy.PPM), new Vector2(5 / LostLegacy.PPM, -8 / LostLegacy.PPM));
+//        EdgeShape sword = new EdgeShape();
+//        sword.set(new Vector2(-6 / LostLegacy.PPM, -8 / LostLegacy.PPM), new Vector2(6 / LostLegacy.PPM, -8 / LostLegacy.PPM));
+        PolygonShape sword = new PolygonShape();
+        sword.set(new Vector2[] {
+                new Vector2(-6 / LostLegacy.PPM, 0),
+                new Vector2(6 / LostLegacy.PPM, 0),
+                new Vector2(-6 / LostLegacy.PPM, -12 / LostLegacy.PPM),
+                new Vector2(6 / LostLegacy.PPM, -12 / LostLegacy.PPM)
+        });
         fdef.shape = sword;
         fdef.isSensor = true;
         b2body.createFixture(fdef).setUserData("sword");
     }
 
     public void update(float deltaTime) {
+        if (b2body.getLinearVelocity().y == 0) {
+            attacking = false;
+        }
         setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight()/2);
         setRegion(getFrame(deltaTime));
     }
@@ -137,4 +148,18 @@ public class Skeleton extends Sprite {
         b2body.applyLinearImpulse(new Vector2(0, 3.5f - b2body.getLinearVelocity().y), b2body.getWorldCenter(), true);
     }
 
+    public void die() {
+        getTexture().dispose(); //TODO: Alterar
+    }
+
+    public void attack() {
+        float delay = 0.5f; // seconds
+        attacking = true;
+        Timer.schedule(new Timer.Task(){
+            @Override
+            public void run() {
+                attacking = false;
+            }
+        }, delay);
+    }
 }

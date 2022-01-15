@@ -35,4 +35,5 @@ public abstract class InteractiveTileObject {
     }
 
     public abstract void onSwordHit();
+    public abstract void onBodyHit();
 }

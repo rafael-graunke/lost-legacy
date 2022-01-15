@@ -77,7 +77,9 @@ public class PlayScreen implements Screen{
 
 	public void handleInput(float deltaTime) {
 
-		player.attacking = Gdx.input.isKeyPressed(Input.Keys.Z) && (player.b2body.getLinearVelocity().y != 0);
+//		player.attacking = Gdx.input.isKeyPressed(Input.Keys.Z) && (player.b2body.getLinearVelocity().y != 0);
+		if (Gdx.input.isKeyJustPressed(Input.Keys.Z) && player.b2body.getLinearVelocity().y != 0)
+			player.attack();
 		if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && (player.getState() == Skeleton.State.STANDING || player.getState() == Skeleton.State.WALKING))
 			player.jump();
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 2)
