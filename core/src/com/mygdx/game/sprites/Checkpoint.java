@@ -2,14 +2,16 @@ package com.mygdx.game.sprites;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.mygdx.game.LostLegacy;
 import com.mygdx.game.screens.PlayScreen;
 
-public class Spike extends InteractiveTileObject {
+public class Checkpoint extends InteractiveTileObject{
 
     private PlayScreen screen;
 
-    public Spike(World world, TiledMap map, Rectangle bounds, PlayScreen screen) {
+    public Checkpoint(World world, TiledMap map, Rectangle bounds, PlayScreen screen) {
         super(world, map, bounds);
         fixture.setUserData(this);
         this.screen = screen;
@@ -17,15 +19,12 @@ public class Spike extends InteractiveTileObject {
 
     @Override
     public void onSwordHit() {
-        Skeleton player = screen.getPlayer();
-        if (player.currentState == Skeleton.State.ATTACKING)
-            player.jump();
+
     }
 
     @Override
     public void onBodyHit() {
         Skeleton player = screen.getPlayer();
-        player.hit();
+        player.setCheckpoint(new Vector2(bounds.getX() / LostLegacy.PPM, bounds.getY() / LostLegacy.PPM));
     }
-
 }

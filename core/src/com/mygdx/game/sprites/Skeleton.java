@@ -17,6 +17,7 @@ public class Skeleton extends Sprite {
     public State previousState;
     public World world;
     public Body b2body;
+    private Vector2 checkpoint;
     private TextureRegion playerIdle;
     private Animation<TextureRegion> skeletonWalk;
     private Animation<TextureRegion> skeletonJump;
@@ -24,11 +25,17 @@ public class Skeleton extends Sprite {
     public float stateTimer;
     private boolean walkingRigth;
     public boolean attacking;
+    private int health;
+    private int bones;
+    private int keys;
 
     public Skeleton(World world, PlayScreen screen) {
         super(screen.getAtlas().findRegion("idle"));
         this.world = world;
 
+        health = 3;
+        bones = 0;
+        keys = 0;
         currentState = State.STANDING;
         previousState = State.STANDING;
         stateTimer = 0;
@@ -64,12 +71,25 @@ public class Skeleton extends Sprite {
         b2body = world.createBody(bdef);
 
         FixtureDef fdef = new FixtureDef();
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(7 / LostLegacy.PPM, 7 / LostLegacy.PPM);
+//        PolygonShape shape = new PolygonShape();
+//        shape.setAsBox(7 / LostLegacy.PPM, 7 / LostLegacy.PPM);
+        CircleShape shape = new CircleShape();
+        shape.setRadius(7 / LostLegacy.PPM);
 
         fdef.shape = shape;
         fdef.friction = 0.5f;
 
+        b2body.createFixture(fdef).setUserData("body");
+
+        PolygonShape body = new PolygonShape();
+        body.set(new Vector2[] {
+                new Vector2(-6 / LostLegacy.PPM, 0),
+                new Vector2(6 / LostLegacy.PPM, 0),
+                new Vector2(-6 / LostLegacy.PPM, -6 / LostLegacy.PPM),
+                new Vector2(6 / LostLegacy.PPM, -6 / LostLegacy.PPM)
+        });
+
+        fdef.shape = body;
         b2body.createFixture(fdef).setUserData("body");
 
 //        EdgeShape sword = new EdgeShape();
@@ -148,12 +168,32 @@ public class Skeleton extends Sprite {
         b2body.applyLinearImpulse(new Vector2(0, 3.5f - b2body.getLinearVelocity().y), b2body.getWorldCenter(), true);
     }
 
+    public void hit() {
+        float delay = 0.01f;
+        if (health > 0) {
+            Timer.schedule(new Timer.Task(){
+                @Override
+                public void run() {
+                    b2body.setLinearVelocity(0,0);
+                    b2body.setTransform(checkpoint, b2body.getAngle());
+                    health --;
+                }
+            }, delay);
+        } else {
+            die();
+        }
+    }
+
     public void die() {
-        getTexture().dispose(); //TODO: Alterar
+        System.out.printf("Morreu!"); //TODO: Alterar
+    }
+
+    public void win() {
+        System.out.println("Ganhou!"); //TODO: Alterar
     }
 
     public void attack() {
-        float delay = 0.5f; // seconds
+        float delay = 0.5f;
         attacking = true;
         Timer.schedule(new Timer.Task(){
             @Override
@@ -161,5 +201,29 @@ public class Skeleton extends Sprite {
                 attacking = false;
             }
         }, delay);
+    }
+
+    public void addBone() {
+        if (bones < 6) {
+            bones ++;
+        } else {
+            win();
+        }
+    }
+
+    public boolean hasKey() {
+        return keys != 0;
+    }
+
+    public void addKey() {
+        keys ++;
+    }
+
+    public void removeKey() {
+        keys --;
+    }
+
+    public void setCheckpoint(Vector2 checkpoint) {
+        this.checkpoint = checkpoint;
     }
 }

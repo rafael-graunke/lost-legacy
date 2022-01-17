@@ -7,7 +7,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.LostLegacy;
 import com.mygdx.game.screens.PlayScreen;
+import com.mygdx.game.sprites.Checkpoint;
 import com.mygdx.game.sprites.Chest;
+import com.mygdx.game.sprites.Key;
 import com.mygdx.game.sprites.Spike;
 
 public class B2WorldCreator {
@@ -18,7 +20,7 @@ public class B2WorldCreator {
         FixtureDef fdef = new FixtureDef();
         Body body;
 
-        //Chao
+        //Ground
         for (MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
@@ -31,19 +33,29 @@ public class B2WorldCreator {
             fdef.shape = shape;
             body.createFixture(fdef);
         }
-        //baus
+
+        //Chest
         for (MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
-
-            new Chest(world, map, rect);
-
+            new Chest(world, map, rect, screen);
         }
-        //espinhos
+
+        //Spike
         for (MapObject object : map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
-
             new Spike(world, map, rect, screen);
+        }
 
+        //Key
+        for (MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+            new Key(world, map, rect, screen);
+        }
+
+        //Checkpoint
+        for (MapObject object : map.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+            new Checkpoint(world, map, rect, screen);
         }
     }
 }
