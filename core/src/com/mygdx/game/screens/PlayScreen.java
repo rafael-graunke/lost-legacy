@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -169,7 +170,7 @@ public class PlayScreen implements Screen{
 
 		renderer.render();
 
-		b2dr.render(world, gameCam.combined);
+//		b2dr.render(world, gameCam.combined);
 
 		game.batch.setProjectionMatrix(gameCam.combined);
 		game.batch.begin();
@@ -215,5 +216,13 @@ public class PlayScreen implements Screen{
 
 	public Skeleton getPlayer() {
 		return player;
+	}
+
+	public void die() {
+		game.setScreen(new GameOverScreen(game, game.batch));
+	}
+
+	public Hud getHud() {
+		return hud;
 	}
 }

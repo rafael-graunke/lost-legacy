@@ -184,7 +184,7 @@ public class Skeleton extends Sprite {
     }
 
     public void die() {
-        System.out.printf("Morreu!"); //TODO: Alterar
+        screen.die();
     }
 
     public void win() {

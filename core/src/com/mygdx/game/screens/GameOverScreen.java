@@ -2,11 +2,15 @@ package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.SpriteCache;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -18,12 +22,14 @@ public class GameOverScreen implements Screen{
 
 	private Viewport viewport;
 	private Stage stage;
-	
+	private SpriteBatch batch;
+
 	private Game game;
 	
-	public GameOverScreen(Game game) {
+	public GameOverScreen(Game game, SpriteBatch batch) {
+		this.batch = batch;
 		this.game = game;
-		viewport = new FitViewport(LostLegacy.V_WIDTH, LostLegacy.V_HEIGHT, new OrthographicCamera());
+		viewport = new FitViewport(400, 200, new OrthographicCamera());
 		stage = new Stage(viewport, ((LostLegacy) game).batch);
 		
 		Label.LabelStyle font = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
@@ -31,9 +37,12 @@ public class GameOverScreen implements Screen{
 		table.center();
 		table.setFillParent(true);
 		
-		Label gameOverLabel = new Label("GAME OVER", font);
-		table.add(gameOverLabel).expandX();
-		
+		Label timeCount = new Label("Ossos Coletados: " + ((PlayScreen) game.getScreen()).getPlayer().getBones(), font);
+		Label bonesCount = new Label("Tempo em segundos: " + ((PlayScreen) game.getScreen()).getHud().getWorldTimer(), font);
+		table.add(timeCount).expandX();
+		table.row();
+		table.add(bonesCount).expandX();
+
 		stage.addActor(table);
 
 	}
@@ -44,11 +53,25 @@ public class GameOverScreen implements Screen{
 		
 	}
 
+	public void update(float delta) {
+		if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+			game.setScreen(new PlayScreen((LostLegacy) game));
+			dispose();
+		}
+	}
+
 	@Override
 	public void render(float delta) {
+		update(delta);
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
+
+		Texture texture = new Texture(Gdx.files.internal("screen/gameover.png"));
+
+		batch.begin();
+		batch.draw(texture, 0, 0);
+		batch.end();
+
 		stage.draw();		
 	}
 
@@ -78,8 +101,7 @@ public class GameOverScreen implements Screen{
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-		
+		stage.dispose();
 	}
 
 }
