@@ -3,6 +3,7 @@ package com.mygdx.game.sprites;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
+import com.mygdx.game.LostLegacy;
 import com.mygdx.game.screens.PlayScreen;
 
 public class Key extends InteractiveTileObject{
@@ -15,6 +16,7 @@ public class Key extends InteractiveTileObject{
         fixture.setUserData(this);
         this.screen = screen;
         interacted = false;
+        setCategoryFilter(LostLegacy.KEY_BIT);
     }
 
     @Override
@@ -25,8 +27,11 @@ public class Key extends InteractiveTileObject{
     @Override
     public void onBodyHit() {
         Skeleton player = screen.getPlayer();
-        if (!interacted)
+        if (!interacted) {
             player.addKey();
             interacted = true;
+            getCell().setTile(null);
+            screen.key.play();
+        }
     }
 }

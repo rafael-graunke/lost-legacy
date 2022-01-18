@@ -3,6 +3,7 @@ package com.mygdx.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -44,8 +45,17 @@ public class PlayScreen implements Screen{
 	private boolean lookingUp;
 	private boolean lookingDown;
 
+	public Sound spike;
+	public Sound key;
+	public Sound chest;
+	public Sound walk;
+
 	public PlayScreen(LostLegacy game) {
 		this.game = game;
+		spike = Gdx.audio.newSound(Gdx.files.internal("audio/spike_hit.mp3"));
+		key = Gdx.audio.newSound(Gdx.files.internal("audio/key.mp3"));
+		chest = Gdx.audio.newSound(Gdx.files.internal("audio/chest.mp3"));
+		walk = Gdx.audio.newSound(Gdx.files.internal("audio/walk.mp3"));
 
 		atlas = new TextureAtlas("spriteSheets/player.atlas");
 
@@ -121,11 +131,10 @@ public class PlayScreen implements Screen{
 			gameCam.position.y = 0 + gamePort.getWorldHeight() / 2 * gameCam.zoom;
 		if (gameCam.position.x - gamePort.getWorldWidth() / 2 * gameCam.zoom <= 0 )
 			gameCam.position.x = 0 + gamePort.getWorldWidth() / 2 * gameCam.zoom;
-		if (gameCam.position.y + gamePort.getWorldHeight() / 2 >= map.getProperties().get("height", Integer.class))
-			gameCam.position.y = gamePort.getWorldHeight() - gamePort.getWorldHeight() / 2 * gameCam.zoom;
-		if (gameCam.position.x + mapWidth / 2 * gameCam.zoom >= mapWidth * gameCam.zoom)
-			gameCam.position.x = mapWidth * gameCam.zoom - mapWidth / 2 * gameCam.zoom;
-		
+		if (gameCam.position.y + gamePort.getWorldHeight() / 2 * gameCam.zoom >= gamePort.getWorldHeight())
+			gameCam.position.y = gamePort.getWorldHeight() - (gamePort.getWorldHeight() / 2 * gameCam.zoom);
+		if (gameCam.position.x + gamePort.getWorldWidth() / 2 * gameCam.zoom >= gamePort.getWorldWidth())
+			gameCam.position.x = gamePort.getWorldWidth() - (gamePort.getWorldWidth() / 2 * gameCam.zoom);		
 		gameCam.update();
 		renderer.setView(gameCam);
 	}

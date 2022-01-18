@@ -1,8 +1,10 @@
 package com.mygdx.game.sprites;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
+import com.mygdx.game.LostLegacy;
 import com.mygdx.game.screens.PlayScreen;
 
 public class Spike extends InteractiveTileObject {
@@ -18,8 +20,10 @@ public class Spike extends InteractiveTileObject {
     @Override
     public void onSwordHit() {
         Skeleton player = screen.getPlayer();
-        if (player.currentState == Skeleton.State.ATTACKING)
+        if (player.currentState == Skeleton.State.ATTACKING) {
             player.jump();
+            screen.spike.play();
+        }
     }
 
     @Override

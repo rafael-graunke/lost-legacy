@@ -28,9 +28,11 @@ public class Skeleton extends Sprite {
     private int health;
     private int bones;
     private int keys;
+    private PlayScreen screen;
 
     public Skeleton(World world, PlayScreen screen) {
         super(screen.getAtlas().findRegion("idle"));
+        this.screen = screen;
         this.world = world;
 
         health = 3;
