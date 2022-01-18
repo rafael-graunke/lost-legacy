@@ -71,22 +71,19 @@ public class Skeleton extends Sprite {
         b2body = world.createBody(bdef);
 
         FixtureDef fdef = new FixtureDef();
-//        PolygonShape shape = new PolygonShape();
-//        shape.setAsBox(7 / LostLegacy.PPM, 7 / LostLegacy.PPM);
-        CircleShape shape = new CircleShape();
-        shape.setRadius(7 / LostLegacy.PPM);
-
-        fdef.shape = shape;
         fdef.friction = 0.5f;
-
-        b2body.createFixture(fdef).setUserData("body");
+        fdef.filter.categoryBits = LostLegacy.SKELETON_BIT;
+        fdef.filter.maskBits = LostLegacy.DEFAULT_BIT | LostLegacy.CHEST_BIT | LostLegacy.KEY_BIT;
+        
 
         PolygonShape body = new PolygonShape();
         body.set(new Vector2[] {
-                new Vector2(-6 / LostLegacy.PPM, 0),
-                new Vector2(6 / LostLegacy.PPM, 0),
-                new Vector2(-6 / LostLegacy.PPM, -6 / LostLegacy.PPM),
-                new Vector2(6 / LostLegacy.PPM, -6 / LostLegacy.PPM)
+                new Vector2(-7 / LostLegacy.PPM, 4/ LostLegacy.PPM),
+                new Vector2(-4 / LostLegacy.PPM, 7/ LostLegacy.PPM),
+                new Vector2(4 / LostLegacy.PPM, 7/ LostLegacy.PPM),
+                new Vector2(7 / LostLegacy.PPM, 4/ LostLegacy.PPM),
+                new Vector2(7 / LostLegacy.PPM, -6/ LostLegacy.PPM),
+                new Vector2(-7 / LostLegacy.PPM, -6/ LostLegacy.PPM)
         });
 
         fdef.shape = body;
@@ -193,7 +190,7 @@ public class Skeleton extends Sprite {
     }
 
     public void attack() {
-        float delay = 0.5f;
+        float delay = 0.25f;
         attacking = true;
         Timer.schedule(new Timer.Task(){
             @Override
@@ -225,5 +222,17 @@ public class Skeleton extends Sprite {
 
     public void setCheckpoint(Vector2 checkpoint) {
         this.checkpoint = checkpoint;
+    }
+    
+    public int getKeys() {
+    	return keys;
+    }
+    
+    public int getBones() {
+    	return bones;
+    }
+    
+    public int getHealth() {
+    	return health;
     }
 }

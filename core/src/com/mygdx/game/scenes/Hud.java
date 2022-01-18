@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.LostLegacy;
+import com.mygdx.game.sprites.Skeleton;
 
 public class Hud implements Disposable {
 
@@ -20,17 +21,20 @@ public class Hud implements Disposable {
     private int worldTimer;
     private float timeCount;
     private int score;
+    
+    private Skeleton player;
 
-    Label countdownLabel;
-    Label scoreLabel;
+    Label lifeLabel;
     Label timeLabel;
-    Label levelLabel;
-    Label worldLabel;
+    Label keysLabel;
+    Label bonesLabel;
 
-    public Hud(SpriteBatch sb) {
-        worldTimer = 300;
+    public Hud(SpriteBatch sb, Skeleton player) {
+        worldTimer = 0;
         timeCount = 0;
         score = 0;
+        
+        this.player = player;
 
         viewport = new FitViewport(LostLegacy.V_WIDTH, LostLegacy.V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, sb);
@@ -39,18 +43,20 @@ public class Hud implements Disposable {
         table.top();
         table.setFillParent(true);
 
+        timeLabel = new Label("Tempo: ", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        keysLabel = new Label("Chaves: ", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        bonesLabel = new Label("Ossos: ", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        lifeLabel = new Label("Vida: ", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        
+        Label fill = new Label("", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
 
-        countdownLabel = new Label(String.format("%03d", worldTimer), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        scoreLabel = new Label(String.format("%06d", score), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        timeLabel = new Label("TIME", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        levelLabel = new Label("LEVEL", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        worldLabel = new Label("WORLD", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-
-        table.add(timeLabel).expandX().padTop(10);
+        table.add(timeLabel).expandX().padTop(10).colspan(10);
+        
         table.row();
-        table.add(scoreLabel).expandX();
-        table.row();
-        table.add(countdownLabel);
+        table.add(fill).colspan(7);
+        table.add(keysLabel).expandX().colspan(1);
+        table.add(bonesLabel).expandX().colspan(1);
+        table.add(lifeLabel).expandX().colspan(1);
 
         stage.addActor(table);
     }
@@ -58,10 +64,13 @@ public class Hud implements Disposable {
     public void update(float deltaTime) {
         timeCount += deltaTime;
         if (timeCount >= 1) {
-            worldTimer --;
-            countdownLabel.setText(String.format("%03d", worldTimer));
+            worldTimer ++;
+            timeLabel.setText("Tempo: " + String.format("%03d", worldTimer));
             timeCount = 0;
         }
+        keysLabel.setText("Chaves: " + player.getKeys());
+        bonesLabel.setText("Ossos: " + player.getBones());
+        lifeLabel.setText("Vida: " + player.getHealth());
     }
 
     @Override

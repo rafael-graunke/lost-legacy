@@ -1,6 +1,5 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -18,6 +17,12 @@ public class LostLegacy extends Game {
 	public static final int V_WIDTH = 1280;
 	public static final int V_HEIGHT = 720;
 	public static final float PPM = 100;
+	
+	public static final short DEFAULT_BIT = 1;
+	public static final short SKELETON_BIT = 2;
+	public static final short KEY_BIT = 4;
+	public static final short CHEST_BIT = 8;
+	
 
 	@Override
 	public void create () {

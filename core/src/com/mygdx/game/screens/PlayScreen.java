@@ -11,6 +11,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.LostLegacy;
@@ -32,11 +33,16 @@ public class PlayScreen implements Screen{
 	//TileMap
 	private TmxMapLoader mapLoader;
 	private TiledMap map;
+	private int mapWidth;
+	private int mapHeight;
 	private OrthogonalTiledMapRenderer renderer;
 
 	//Box2D
 	private World world;
 	private Box2DDebugRenderer b2dr;
+
+	private boolean lookingUp;
+	private boolean lookingDown;
 
 	public PlayScreen(LostLegacy game) {
 		this.game = game;
@@ -45,12 +51,13 @@ public class PlayScreen implements Screen{
 
 		gameCam = new OrthographicCamera();
 		gameCam.zoom = 0.3f;
-		gamePort = new FitViewport(LostLegacy.V_WIDTH / LostLegacy.PPM , LostLegacy.V_HEIGHT / LostLegacy.PPM, gameCam);
-
-		hud = new Hud(game.batch);
+		gamePort = new FitViewport(LostLegacy.V_WIDTH / LostLegacy.PPM , LostLegacy.V_HEIGHT / LostLegacy.PPM, gameCam);		
 
 		mapLoader = new TmxMapLoader();
 		map = mapLoader.load("map.tmx");
+		mapWidth = map.getProperties().get("width", Integer.class);
+		mapHeight = map.getProperties().get("height", Integer.class);
+		
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / LostLegacy.PPM);
 
 		gameCam.position.set(gamePort.getWorldWidth()/2 * gameCam.zoom, gamePort.getWorldHeight()/2 * gameCam.zoom, 0);
@@ -61,6 +68,8 @@ public class PlayScreen implements Screen{
 		new B2WorldCreator(world, map, this);
 
 		player = new Skeleton(world, this);
+		
+		hud = new Hud(game.batch, player);
 
 		world.setContactListener(new WorldContactListener());
 	}
@@ -74,16 +83,18 @@ public class PlayScreen implements Screen{
 	public TextureAtlas getAtlas() {
 		return atlas;
 	}
-
+ 
 	public void handleInput(float deltaTime) {
 		if (Gdx.input.isKeyJustPressed(Input.Keys.Z) && player.b2body.getLinearVelocity().y != 0)
 			player.attack();
-		if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && (player.getState() == Skeleton.State.STANDING || player.getState() == Skeleton.State.WALKING))
+		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && (player.getState() == Skeleton.State.STANDING || player.getState() == Skeleton.State.WALKING))
 			player.jump();
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 2)
 			player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -2)
 			player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
+		lookingUp = Gdx.input.isKeyPressed(Input.Keys.UP);
+		lookingDown = Gdx.input.isKeyPressed(Input.Keys.DOWN);
 	}
 
 	public void update(float deltaTime) {
@@ -96,20 +107,51 @@ public class PlayScreen implements Screen{
 		hud.update(deltaTime);
 
 		gameCam.position.x = player.b2body.getPosition().x;
-		gameCam.position.y = player.b2body.getPosition().y;
+		
+		if (!lookingDown && !lookingUp)
+			gameCam.position.y = player.b2body.getPosition().y;
+		else if (lookingDown) {
+			lookDown();
+		}
+		else if (lookingUp) {
+			lookUp();
+		}
+		
 		if (gameCam.position.y - gamePort.getWorldHeight() / 2 * gameCam.zoom <= 0 )
 			gameCam.position.y = 0 + gamePort.getWorldHeight() / 2 * gameCam.zoom;
 		if (gameCam.position.x - gamePort.getWorldWidth() / 2 * gameCam.zoom <= 0 )
 			gameCam.position.x = 0 + gamePort.getWorldWidth() / 2 * gameCam.zoom;
-		if (gameCam.position.y - gamePort.getWorldHeight() / 2 * gameCam.zoom >= gamePort.getWorldHeight() )
+		if (gameCam.position.y + gamePort.getWorldHeight() / 2 >= map.getProperties().get("height", Integer.class))
 			gameCam.position.y = gamePort.getWorldHeight() - gamePort.getWorldHeight() / 2 * gameCam.zoom;
-		if (gameCam.position.x + gamePort.getWorldWidth() / 2 * gameCam.zoom >= gamePort.getWorldWidth() )
-			gameCam.position.x = gamePort.getWorldWidth() - gamePort.getWorldWidth() / 2 * gameCam.zoom;
-
+		if (gameCam.position.x + mapWidth / 2 * gameCam.zoom >= mapWidth * gameCam.zoom)
+			gameCam.position.x = mapWidth * gameCam.zoom - mapWidth / 2 * gameCam.zoom;
+		
 		gameCam.update();
 		renderer.setView(gameCam);
 	}
-
+	
+	public void lookUp() {
+		float delay = 0.25f;
+	    Timer.schedule(new Timer.Task(){
+	        @Override
+	        public void run() {
+	        	if(lookingUp)
+	        		gameCam.position.y = player.b2body.getPosition().y + 64 / LostLegacy.PPM;
+	        }
+	    }, delay);
+	}
+	
+	public void lookDown() {
+		float delay = 0.25f;
+	    Timer.schedule(new Timer.Task(){
+	        @Override
+	        public void run() {
+	        	if(lookingDown)
+	        		gameCam.position.y = player.b2body.getPosition().y - 64 / LostLegacy.PPM;
+	        }
+	    }, delay);
+	}
+	
 	@Override
 	public void render(float delta) {
 		update(delta);
