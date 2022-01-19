@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.SpriteCache;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -18,15 +17,17 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.LostLegacy;
 
-public class GameOverScreen implements Screen{
+public class WinScreen implements Screen{
 
+	
 	private Viewport viewport;
 	private Stage stage;
 	private SpriteBatch batch;
+	private OrthographicCamera camera;
 
 	private Game game;
 	
-	public GameOverScreen(Game game, SpriteBatch batch) {
+	public WinScreen(Game game, SpriteBatch batch) {
 		this.batch = batch;
 		this.game = game;
 		viewport = new FitViewport(400, 200, new OrthographicCamera());
@@ -44,7 +45,6 @@ public class GameOverScreen implements Screen{
 		table.add(bonesCount).expandX();
 
 		stage.addActor(table);
-
 	}
 	
 	@Override
@@ -59,14 +59,14 @@ public class GameOverScreen implements Screen{
 			dispose();
 		}
 	}
-
+	
 	@Override
 	public void render(float delta) {
 		update(delta);
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		Texture texture = new Texture(Gdx.files.internal("screen/gameover.png"));
+		Texture texture = new Texture(Gdx.files.internal("screen/win.png"));
 
 		batch.begin();
 		batch.draw(texture, 0, 0);
@@ -77,8 +77,7 @@ public class GameOverScreen implements Screen{
 
 	@Override
 	public void resize(int width, int height) {
-		viewport.update(width, height);
-		
+		viewport.update(width, height);		
 	}
 
 	@Override
@@ -101,7 +100,7 @@ public class GameOverScreen implements Screen{
 
 	@Override
 	public void dispose() {
-		stage.dispose();
+		stage.dispose();		
 	}
 
 }

@@ -222,6 +222,10 @@ public class PlayScreen implements Screen{
 		game.setScreen(new GameOverScreen(game, game.batch));
 	}
 
+	public void win() {
+		game.setScreen(new WinScreen(game, game.batch));
+	}
+	
 	public Hud getHud() {
 		return hud;
 	}

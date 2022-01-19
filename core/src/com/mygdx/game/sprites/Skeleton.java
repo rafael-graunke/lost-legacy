@@ -188,7 +188,7 @@ public class Skeleton extends Sprite {
     }
 
     public void win() {
-        System.out.println("Ganhou!"); //TODO: Alterar
+        screen.win();
     }
 
     public void attack() {

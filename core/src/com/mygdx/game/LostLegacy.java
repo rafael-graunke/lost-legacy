@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.mygdx.game.screens.MenuScreen;
 import com.mygdx.game.screens.PlayScreen;
 
 public class LostLegacy extends Game {
@@ -29,7 +30,7 @@ public class LostLegacy extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		setScreen(new PlayScreen(this));
+		setScreen(new MenuScreen(this, batch));
 	}
 
 	@Override
